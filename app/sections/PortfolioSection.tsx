@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
-import { Briefcase, ExternalLink, ArrowUpRight } from 'lucide-react'
+import { Briefcase, ExternalLink, ArrowUpRight, Globe, Bot, BarChart2, Search, TrendingUp, Layout } from 'lucide-react'
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null)
@@ -14,12 +14,12 @@ function useReveal() {
 }
 
 const projects = [
-  { title: 'RITEL COMMUNITY.ID', cat: 'Web Platform', tags: ['Next.js', 'Supabase', 'FastAPI'], desc: 'Platform komunitas trader Indonesia dengan screener saham, analisa teknikal, dan sistem membership premium.', emoji: '📊', color: '#0066ff', year: '2024' },
-  { title: 'RITEL COMMUNITY AI', cat: 'AI & Analytics', tags: ['Next.js', 'OpenAI', 'Python'], desc: 'Sistem AI untuk analisa saham, rekomendasi trading, dan pembuatan laporan otomatis berbasis machine learning.', emoji: '🤖', color: '#7c3aed', year: '2024' },
-  { title: 'Trading Dashboard', cat: 'Dashboard', tags: ['React', 'TailwindCSS', 'API'], desc: 'Dashboard trading real-time dengan chart interaktif, portfolio tracker, dan notifikasi sinyal.', emoji: '📈', color: '#00d4ff', year: '2023' },
-  { title: 'Market Scanner', cat: 'Web App', tags: ['Next.js', 'Python', 'Pandas'], desc: 'Scanner pasar saham Indonesia dengan filter teknikal, screening otomatis, dan export laporan.', emoji: '🔍', color: '#22c55e', year: '2023' },
-  { title: 'Crypto Analytics', cat: 'Analytics', tags: ['Next.js', 'API', 'Chart.js'], desc: 'Platform analisa cryptocurrency dengan heatmap, tracking portofolio, dan kalkulasi profit/loss otomatis.', emoji: '🪙', color: '#f59e0b', year: '2022' },
-  { title: 'Portfolio Website', cat: 'Web System', tags: ['Next.js', 'TypeScript', 'Tailwind'], desc: 'Website portofolio premium dengan design futuristik, animasi smooth, dan showcase project.', emoji: '🌐', color: '#00d4ff', year: '2026' },
+  { title: 'RITEL COMMUNITY.ID', cat: 'Web Platform', tags: ['Next.js', 'Supabase', 'FastAPI'], desc: 'Platform komunitas trader Indonesia dengan screener saham, analisa teknikal, dan sistem membership premium.', icon: <Globe size={22} />, color: '#0066ff', year: '2024' },
+  { title: 'RITEL COMMUNITY AI', cat: 'AI & Analytics', tags: ['Next.js', 'OpenAI', 'Python'], desc: 'Sistem AI untuk analisa saham, rekomendasi trading, dan pembuatan laporan otomatis berbasis machine learning.', icon: <Bot size={22} />, color: '#7c3aed', year: '2024' },
+  { title: 'Trading Dashboard', cat: 'Dashboard', tags: ['React', 'TailwindCSS', 'API'], desc: 'Dashboard trading real-time dengan chart interaktif, portfolio tracker, dan notifikasi sinyal.', icon: <BarChart2 size={22} />, color: '#00d4ff', year: '2023' },
+  { title: 'Market Scanner', cat: 'Web App', tags: ['Next.js', 'Python', 'Pandas'], desc: 'Scanner pasar saham Indonesia dengan filter teknikal, screening otomatis, dan export laporan.', icon: <Search size={22} />, color: '#22c55e', year: '2023' },
+  { title: 'Crypto Analytics', cat: 'Analytics', tags: ['Next.js', 'API', 'Chart.js'], desc: 'Platform analisa cryptocurrency dengan heatmap, tracking portofolio, dan kalkulasi profit/loss otomatis.', icon: <TrendingUp size={22} />, color: '#f59e0b', year: '2022' },
+  { title: 'Portfolio Website', cat: 'Web System', tags: ['Next.js', 'TypeScript', 'Tailwind'], desc: 'Website portofolio premium dengan design futuristik, animasi smooth, dan showcase project.', icon: <Layout size={22} />, color: '#00d4ff', year: '2026' },
 ]
 
 export default function PortfolioSection() {
@@ -61,10 +61,13 @@ export default function PortfolioSection() {
                 <div style={{ position: 'absolute', top: 20, right: 20, width: 36, height: 36, borderRadius: 10, background: `${p.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <ExternalLink size={14} color={p.color} />
                 </div>
-                <div style={{ fontSize: 40, marginBottom: 14 }}>{p.emoji}</div>
+                {/* Project icon */}
+                <div style={{ width: 52, height: 52, borderRadius: 14, background: `${p.color}18`, border: `1px solid ${p.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: p.color, marginBottom: 16 }}>
+                  {p.icon}
+                </div>
                 <div style={{ fontSize: 10, color: p.color, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>{p.cat} · {p.year}</div>
                 <h3 style={{ fontSize: 17, fontWeight: 700, color: '#fff', marginBottom: 10, lineHeight: 1.3 }}>{p.title}</h3>
-                <p style={{ fontSize: 13, color: 'rgba(148,163,184,0.8)', lineHeight: 1.6, marginBottom: 0 }}>{p.desc}</p>
+                <p style={{ fontSize: 13, color: 'rgba(148,163,184,0.8)', lineHeight: 1.6 }}>{p.desc}</p>
               </div>
               {/* Tags */}
               <div style={{ padding: '0 24px 24px', display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -72,7 +75,6 @@ export default function PortfolioSection() {
                   <span key={j} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '4px 10px', fontSize: 11, color: '#94a3b8', fontWeight: 500 }}>{tag}</span>
                 ))}
               </div>
-              {/* Hover bottom bar */}
               <div style={{ height: 3, background: `linear-gradient(90deg, ${p.color}, transparent)`, opacity: hovered === i ? 1 : 0, transition: 'opacity 0.3s ease' }} />
             </div>
           ))}
