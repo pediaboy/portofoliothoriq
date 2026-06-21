@@ -1,6 +1,6 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
-import { ArrowRight, Mail, ChevronDown, Code2, TrendingUp, Zap } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { ArrowRight, Mail, ChevronDown, Code2, TrendingUp, Zap, Star, CheckCircle } from 'lucide-react'
 
 export default function HeroSection() {
   const [visible, setVisible] = useState(false)
@@ -38,7 +38,7 @@ export default function HeroSection() {
     { icon: <Code2 size={18} />, val: '6+', label: 'Years Web Dev' },
     { icon: <TrendingUp size={18} />, val: '3+', label: 'Years Trading' },
     { icon: <Zap size={18} />, val: '50+', label: 'Projects Built' },
-    { icon: <span style={{fontSize:16}}>🌍</span>, val: '100%', label: 'Client Satisfaction' },
+    { icon: <Star size={18} />, val: '100%', label: 'Client Satisfaction' },
   ]
 
   return (
@@ -59,30 +59,30 @@ export default function HeroSection() {
                 Available for Projects
               </span>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.25)', borderRadius: 100, padding: '6px 14px', fontSize: 12, fontWeight: 600, color: '#a78bfa', letterSpacing: '0.05em' }}>
-                ✦ WEB DEVELOPER · TRADER · CRYPTO ENTHUSIAST
+                <Code2 size={11} /> WEB DEVELOPER · TRADER · CRYPTO ENTHUSIAST
               </span>
             </div>
 
             {/* Name */}
             <h1 style={{ fontSize: 'clamp(42px, 7vw, 80px)', fontWeight: 900, lineHeight: 1.05, marginBottom: 8, letterSpacing: '-1px' }}>
               <span style={{ display: 'block', color: '#fff' }}>THIRAFI</span>
-              <span style={{ display: 'block', background: 'linear-gradient(135deg, #00d4ff, #0066ff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textShadow: 'none' }}>THARIQ</span>
+              <span style={{ display: 'block', background: 'linear-gradient(135deg, #00d4ff, #0066ff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>THARIQ</span>
               <span style={{ display: 'block', color: 'rgba(255,255,255,0.85)' }}>AL IDRIS</span>
             </h1>
 
             {/* Subtitle badges */}
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', margin: '20px 0 24px' }}>
-              <span style={{ background: 'rgba(0,102,255,0.15)', border: '1px solid rgba(0,102,255,0.3)', borderRadius: 6, padding: '5px 12px', fontSize: 13, fontWeight: 600, color: '#60a5fa', letterSpacing: '0.05em' }}>
-                WEB DEVELOPMENT SEJAK 2018
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(0,102,255,0.15)', border: '1px solid rgba(0,102,255,0.3)', borderRadius: 6, padding: '5px 12px', fontSize: 13, fontWeight: 600, color: '#60a5fa', letterSpacing: '0.05em' }}>
+                <Code2 size={12} /> WEB DEVELOPMENT SEJAK 2018
               </span>
-              <span style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)', borderRadius: 6, padding: '5px 12px', fontSize: 13, fontWeight: 600, color: '#86efac', letterSpacing: '0.05em' }}>
-                TRADING SAHAM & CRYPTO SEJAK 2021
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)', borderRadius: 6, padding: '5px 12px', fontSize: 13, fontWeight: 600, color: '#86efac', letterSpacing: '0.05em' }}>
+                <TrendingUp size={12} /> TRADING SAHAM & CRYPTO SEJAK 2021
               </span>
             </div>
 
             {/* Typewriter */}
             <div style={{ fontSize: 20, fontWeight: 600, color: '#00d4ff', fontFamily: 'JetBrains Mono, monospace', marginBottom: 20, minHeight: 32 }}>
-              &gt; {typed}<span style={{ borderRight: '2px solid #00d4ff', animation: 'none', marginLeft: 1 }}>_</span>
+              &gt; {typed}<span style={{ borderRight: '2px solid #00d4ff', marginLeft: 1 }}>_</span>
             </div>
 
             {/* Description */}
@@ -101,8 +101,7 @@ export default function HeroSection() {
                 boxShadow: '0 0 24px rgba(0,102,255,0.4)',
               }}
               onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
-              onMouseLeave={e => (e.currentTarget.style.transform = 'none')}
-              >
+              onMouseLeave={e => (e.currentTarget.style.transform = 'none')}>
                 About Me <ArrowRight size={16} />
               </button>
               <button onClick={() => scrollTo('projects')} style={{
@@ -113,8 +112,7 @@ export default function HeroSection() {
                 cursor: 'pointer', transition: 'all 0.3s ease', fontFamily: 'inherit',
               }}
               onMouseEnter={e => { (e.currentTarget.style.background = 'rgba(0,212,255,0.14)'); (e.currentTarget.style.transform = 'translateY(-2px)') }}
-              onMouseLeave={e => { (e.currentTarget.style.background = 'rgba(0,212,255,0.08)'); (e.currentTarget.style.transform = 'none') }}
-              >
+              onMouseLeave={e => { (e.currentTarget.style.background = 'rgba(0,212,255,0.08)'); (e.currentTarget.style.transform = 'none') }}>
                 View Projects
               </button>
               <button onClick={() => scrollTo('contact')} style={{
@@ -125,19 +123,15 @@ export default function HeroSection() {
                 cursor: 'pointer', transition: 'all 0.3s ease', fontFamily: 'inherit',
               }}
               onMouseEnter={e => { (e.currentTarget.style.borderColor = 'rgba(148,163,184,0.4)'); (e.currentTarget.style.color = '#cbd5e1') }}
-              onMouseLeave={e => { (e.currentTarget.style.borderColor = 'rgba(148,163,184,0.2)'); (e.currentTarget.style.color = 'rgba(148,163,184,0.8)') }}
-              >
+              onMouseLeave={e => { (e.currentTarget.style.borderColor = 'rgba(148,163,184,0.2)'); (e.currentTarget.style.color = 'rgba(148,163,184,0.8)') }}>
                 <Mail size={15} /> Contact
               </button>
             </div>
           </div>
 
-          {/* RIGHT — Code card (no human image) */}
+          {/* RIGHT — Code card */}
           <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateX(40px)', transition: 'all 0.9s cubic-bezier(0.4,0,0.2,1) 0.2s' }} className="hero-code-card">
-            <div style={{
-              width: 320, position: 'relative',
-            }} className="float-anim">
-              {/* Glow ring */}
+            <div style={{ width: 320, position: 'relative' }} className="float-anim">
               <div style={{ position: 'absolute', inset: -20, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(0,102,255,0.2) 0%, transparent 70%)', pointerEvents: 'none' }} />
               {/* Code card */}
               <div style={{
@@ -166,16 +160,16 @@ export default function HeroSection() {
                   <div><span style={{ color: '#a78bfa' }}>focus</span>: <span style={{ color: '#86efac' }}>"Problem Solving"</span></div>
                 </div>
                 <div style={{ color: '#94a3b8' }}>{'}'};</div>
-                <div style={{ marginTop: 12, color: '#00d4ff' }}>// Building the future 🚀</div>
+                <div style={{ marginTop: 12, color: '#64748b', fontSize: 11 }}>// Building the future of tech</div>
               </div>
 
-              {/* Floating badges */}
-              <div style={{ position: 'absolute', top: -16, right: -16, background: 'rgba(0,102,255,0.15)', border: '1px solid rgba(0,102,255,0.35)', borderRadius: 10, padding: '8px 14px', fontSize: 12, fontWeight: 700, color: '#60a5fa', backdropFilter: 'blur(12px)' }}>
-                <div style={{ fontSize: 18, textAlign: 'center' }}>🏆</div>
+              {/* Floating badges — Lucide icons only */}
+              <div style={{ position: 'absolute', top: -16, right: -16, background: 'rgba(0,102,255,0.15)', border: '1px solid rgba(0,102,255,0.35)', borderRadius: 10, padding: '10px 14px', fontSize: 12, fontWeight: 700, color: '#60a5fa', backdropFilter: 'blur(12px)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                <Star size={16} color="#60a5fa" />
                 <div>50+ Projects</div>
               </div>
-              <div style={{ position: 'absolute', bottom: -14, left: -14, background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 10, padding: '8px 14px', fontSize: 12, fontWeight: 700, color: '#86efac', backdropFilter: 'blur(12px)' }}>
-                <div style={{ fontSize: 18, textAlign: 'center' }}>📈</div>
+              <div style={{ position: 'absolute', bottom: -14, left: -14, background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 10, padding: '10px 14px', fontSize: 12, fontWeight: 700, color: '#86efac', backdropFilter: 'blur(12px)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                <TrendingUp size={16} color="#86efac" />
                 <div>Trader Active</div>
               </div>
             </div>
@@ -188,12 +182,10 @@ export default function HeroSection() {
             <div key={i} style={{
               background: 'rgba(7,20,51,0.6)', border: '1px solid rgba(0,212,255,0.12)',
               borderRadius: 14, padding: '20px', display: 'flex', alignItems: 'center', gap: 14,
-              backdropFilter: 'blur(16px)',
-              transition: 'all 0.3s ease',
+              backdropFilter: 'blur(16px)', transition: 'all 0.3s ease',
             }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,212,255,0.35)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,212,255,0.12)'; (e.currentTarget as HTMLElement).style.transform = 'none' }}
-            >
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,212,255,0.12)'; (e.currentTarget as HTMLElement).style.transform = 'none' }}>
               <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(0,102,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00d4ff', flexShrink: 0 }}>{s.icon}</div>
               <div>
                 <div style={{ fontSize: 22, fontWeight: 800, color: '#fff', lineHeight: 1.1 }}>{s.val}</div>
@@ -207,7 +199,7 @@ export default function HeroSection() {
       {/* Scroll indicator */}
       <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, opacity: 0.5, cursor: 'pointer', zIndex: 2 }} onClick={() => scrollTo('about')}>
         <span style={{ fontSize: 11, letterSpacing: '0.1em', color: '#94a3b8' }}>SCROLL DOWN</span>
-        <ChevronDown size={16} color="#00d4ff" style={{ animation: 'float 2s ease-in-out infinite' }} />
+        <ChevronDown size={16} color="#00d4ff" />
       </div>
 
       <style>{`
