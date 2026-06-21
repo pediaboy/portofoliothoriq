@@ -1,111 +1,84 @@
 'use client'
-import { useRef, useState } from 'react'
-import { motion, useInView, AnimatePresence } from 'framer-motion'
-import { ExternalLink, ArrowRight, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Briefcase, ExternalLink, ArrowUpRight } from 'lucide-react'
 
-function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, amount: 0.1 })
-  return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay, ease: [0.22,1,0.36,1] }} className={className}>
-      {children}
-    </motion.div>
-  )
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } }, { threshold: 0.08 })
+    if (ref.current) obs.observe(ref.current)
+    return () => obs.disconnect()
+  }, [])
+  return { ref, visible }
 }
 
 const projects = [
-  { id: 1, title: 'RITEL COMMUNITY.ID', cat: 'Community Platform', desc: 'Platform komunitas trader dan investor Indonesia dengan analisa pasar, sinyal trading, dan forum diskusi eksklusif.', long: 'Platform komunitas trader dan investor Indonesia yang dibangun dengan arsitektur modern. Menggabungkan fitur diskusi, analisa pasar real-time, sistem sinyal trading otomatis, dan manajemen membership premium.', tech: ['Next.js', 'Supabase', 'Tailwind', 'FastAPI'], color: '#00d4ff', icon: '🌐', featured: true, link: 'https://ritelcommunity.id' },
-  { id: 2, title: 'RITEL COMMUNITY AI', cat: 'Artificial Intelligence', desc: 'Sistem kecerdasan buatan untuk analisa saham Indonesia menggunakan data real-time untuk mengidentifikasi peluang trading.', long: 'Sistem AI yang dibangun khusus untuk menganalisa kondisi saham Indonesia secara otomatis. Menggunakan machine learning untuk mengidentifikasi pola, sinyal beli/jual berdasarkan data historis dan real-time.', tech: ['Python', 'FastAPI', 'AI/ML', 'Supabase'], color: '#7c3aed', icon: '🤖', featured: true, link: '#' },
-  { id: 3, title: 'AI MARKET ANALYSIS', cat: 'Analytics System', desc: 'Sistem analisa pasar berbasis AI dengan kalkulasi teknikal otomatis, screening saham, dan visualisasi data premium.', long: 'Platform screener dan analitik pasar yang melakukan kalkulasi teknikal otomatis (MA, MACD, RSI, Bollinger Bands) menggunakan Python pandas. Dilengkapi visualisasi chart interaktif dan sistem alert otomatis.', tech: ['Python', 'Pandas', 'Next.js', 'Chart.js'], color: '#ec4899', icon: '📊', featured: false, link: '#' },
-  { id: 4, title: 'MEMBERSHIP PLATFORM', cat: 'SaaS Platform', desc: 'Platform membership premium dengan sistem akses berlapis, manajemen subscriber, dan konten eksklusif terintegrasi.', long: 'Sistem membership lengkap dengan berbagai tier akses, pembayaran otomatis, manajemen konten eksklusif, dan dashboard admin. Terintegrasi dengan WhatsApp untuk notifikasi otomatis kepada member.', tech: ['Next.js', 'Supabase', 'Stripe', 'WhatsApp API'], color: '#10b981', icon: '💎', featured: false, link: '#' },
-  { id: 5, title: 'TRADING DASHBOARD', cat: 'Dashboard System', desc: 'Dashboard monitoring saham dan market real-time dengan chart interaktif, portfolio tracker, dan analisa otomatis.', long: 'Dashboard komprehensif untuk monitoring portfolio dan kondisi pasar. Menampilkan data real-time, chart candlestick interaktif, kalkulasi P&L otomatis, dan laporan performance.', tech: ['React', 'Node.js', 'WebSocket', 'PostgreSQL'], color: '#f59e0b', icon: '📈', featured: false, link: '#' },
+  { title: 'RITEL COMMUNITY.ID', cat: 'Web Platform', tags: ['Next.js', 'Supabase', 'FastAPI'], desc: 'Platform komunitas trader Indonesia dengan screener saham, analisa teknikal, dan sistem membership premium.', emoji: '📊', color: '#0066ff', year: '2024' },
+  { title: 'RITEL COMMUNITY AI', cat: 'AI & Analytics', tags: ['Next.js', 'OpenAI', 'Python'], desc: 'Sistem AI untuk analisa saham, rekomendasi trading, dan pembuatan laporan otomatis berbasis machine learning.', emoji: '🤖', color: '#7c3aed', year: '2024' },
+  { title: 'Trading Dashboard', cat: 'Dashboard', tags: ['React', 'TailwindCSS', 'API'], desc: 'Dashboard trading real-time dengan chart interaktif, portfolio tracker, dan notifikasi sinyal.', emoji: '📈', color: '#00d4ff', year: '2023' },
+  { title: 'Market Scanner', cat: 'Web App', tags: ['Next.js', 'Python', 'Pandas'], desc: 'Scanner pasar saham Indonesia dengan filter teknikal, screening otomatis, dan export laporan.', emoji: '🔍', color: '#22c55e', year: '2023' },
+  { title: 'Crypto Analytics', cat: 'Analytics', tags: ['Next.js', 'API', 'Chart.js'], desc: 'Platform analisa cryptocurrency dengan heatmap, tracking portofolio, dan kalkulasi profit/loss otomatis.', emoji: '🪙', color: '#f59e0b', year: '2022' },
+  { title: 'Portfolio Website', cat: 'Web System', tags: ['Next.js', 'TypeScript', 'Tailwind'], desc: 'Website portofolio premium dengan design futuristik, animasi smooth, dan showcase project.', emoji: '🌐', color: '#00d4ff', year: '2026' },
 ]
 
 export default function PortfolioSection() {
-  const [selected, setSelected] = useState<typeof projects[0] | null>(null)
+  const { ref, visible } = useReveal()
+  const [hovered, setHovered] = useState<number | null>(null)
+
   return (
-    <section id="portfolio" className="relative section-padding">
-      <div className="max-w-7xl mx-auto px-4">
-        <FadeIn className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-6">
-            <div className="w-2 h-2 rounded-full bg-green-400" />
-            <span className="text-xs text-slate-400 tracking-widest uppercase">Portfolio</span>
+    <section id="projects" ref={ref} style={{ padding: '100px 24px', position: 'relative' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 48, flexWrap: 'wrap', gap: 16 }}>
+          <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(20px)', transition: 'all 0.7s ease' }}>
+            <div className="section-label" style={{ display: 'inline-flex' }}>
+              <Briefcase size={12} /> Featured Projects
+            </div>
+            <h2 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>
+              Project <span className="gradient-text">Showcase</span>
+            </h2>
           </div>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4">
-            Project yang <span className="gradient-text">Sudah Dibuat</span>
-          </h2>
-          <p className="text-slate-400 max-w-xl mx-auto">Setiap project dibangun dengan standar produksi tinggi</p>
-        </FadeIn>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {projects.map((proj, i) => (
-            <FadeIn key={proj.id} delay={i * 0.1}>
-              <motion.div whileHover={{ y: -4, scale: 1.01 }} onClick={() => setSelected(proj)}
-                className="glass-strong rounded-3xl p-6 neon-border cursor-pointer group relative overflow-hidden"
-                style={{ borderColor: proj.featured ? `${proj.color}30` : undefined }}>
-                {proj.featured && (
-                  <div className="absolute top-4 right-4">
-                    <span className="text-xs px-2 py-1 rounded-full font-bold"
-                      style={{ background: `${proj.color}20`, color: proj.color, border: `1px solid ${proj.color}40` }}>Featured</span>
-                  </div>
-                )}
-                <div className="text-4xl mb-4">{proj.icon}</div>
-                <span className="text-xs font-medium tracking-wider" style={{ color: proj.color }}>{proj.cat}</span>
-                <h3 className="text-xl font-black text-white mt-1 mb-3">{proj.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed mb-4">{proj.desc}</p>
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {proj.tech.map(t => (
-                    <span key={t} className="text-xs px-2 py-1 rounded-lg font-medium"
-                      style={{ background: 'rgba(255,255,255,0.05)', color: '#94a3b8', border: '1px solid rgba(255,255,255,0.08)' }}>{t}</span>
-                  ))}
+          <div style={{ fontSize: 13, color: '#00d4ff', fontWeight: 600, opacity: visible ? 1 : 0, transition: 'opacity 0.7s ease 0.3s', display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
+            View All Projects <ArrowUpRight size={14} />
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }} className="proj-grid">
+          {projects.map((p, i) => (
+            <div key={i}
+              onMouseEnter={() => setHovered(i)}
+              onMouseLeave={() => setHovered(null)}
+              style={{
+                background: 'rgba(7,20,51,0.6)', border: `1px solid ${hovered === i ? p.color + '50' : 'rgba(0,212,255,0.12)'}`,
+                borderRadius: 18, overflow: 'hidden', backdropFilter: 'blur(20px)',
+                cursor: 'pointer',
+                opacity: visible ? 1 : 0, transform: visible ? (hovered === i ? 'translateY(-6px)' : 'none') : 'translateY(24px)',
+                transition: `all 0.5s ease ${i * 0.08}s`,
+                boxShadow: hovered === i ? `0 16px 48px rgba(0,0,0,0.4), 0 0 30px ${p.color}20` : 'none',
+              }}>
+              {/* Card header */}
+              <div style={{ padding: '28px 24px 20px', position: 'relative' }}>
+                <div style={{ position: 'absolute', top: 20, right: 20, width: 36, height: 36, borderRadius: 10, background: `${p.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ExternalLink size={14} color={p.color} />
                 </div>
-                <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: proj.color }}>
-                  <span>Lihat Detail</span>
-                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </div>
-              </motion.div>
-            </FadeIn>
+                <div style={{ fontSize: 40, marginBottom: 14 }}>{p.emoji}</div>
+                <div style={{ fontSize: 10, color: p.color, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>{p.cat} · {p.year}</div>
+                <h3 style={{ fontSize: 17, fontWeight: 700, color: '#fff', marginBottom: 10, lineHeight: 1.3 }}>{p.title}</h3>
+                <p style={{ fontSize: 13, color: 'rgba(148,163,184,0.8)', lineHeight: 1.6, marginBottom: 0 }}>{p.desc}</p>
+              </div>
+              {/* Tags */}
+              <div style={{ padding: '0 24px 24px', display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {p.tags.map((tag, j) => (
+                  <span key={j} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '4px 10px', fontSize: 11, color: '#94a3b8', fontWeight: 500 }}>{tag}</span>
+                ))}
+              </div>
+              {/* Hover bottom bar */}
+              <div style={{ height: 3, background: `linear-gradient(90deg, ${p.color}, transparent)`, opacity: hovered === i ? 1 : 0, transition: 'opacity 0.3s ease' }} />
+            </div>
           ))}
         </div>
       </div>
-      <AnimatePresence>
-        {selected && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ background: 'rgba(2,8,24,0.9)', backdropFilter: 'blur(10px)' }}
-            onClick={() => setSelected(null)}>
-            <motion.div initial={{ opacity: 0, scale: 0.9, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 30 }} transition={{ duration: 0.4, ease: [0.22,1,0.36,1] }}
-              onClick={e => e.stopPropagation()} className="glass-strong rounded-3xl p-8 max-w-lg w-full neon-border">
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex items-center gap-4">
-                  <div className="text-4xl">{selected.icon}</div>
-                  <div>
-                    <span className="text-xs font-medium" style={{ color: selected.color }}>{selected.cat}</span>
-                    <h3 className="text-2xl font-black text-white">{selected.title}</h3>
-                  </div>
-                </div>
-                <button onClick={() => setSelected(null)} className="p-2 glass rounded-xl hover:bg-white/10 transition-colors">
-                  <X size={16} className="text-slate-400" />
-                </button>
-              </div>
-              <p className="text-slate-300 leading-relaxed mb-6">{selected.long}</p>
-              <div className="flex flex-wrap gap-2 mb-6">
-                {selected.tech.map(t => (
-                  <span key={t} className="text-xs px-3 py-1.5 rounded-lg font-medium"
-                    style={{ background: `${selected.color}15`, color: selected.color, border: `1px solid ${selected.color}30` }}>{t}</span>
-                ))}
-              </div>
-              {selected.link !== '#' && (
-                <a href={selected.link} target="_blank" rel="noopener noreferrer"
-                  className="btn-primary inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white">
-                  <ExternalLink size={14} />Kunjungi Website
-                </a>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <style>{`@media(max-width:900px){.proj-grid{grid-template-columns:repeat(2,1fr)!important}} @media(max-width:580px){.proj-grid{grid-template-columns:1fr!important}}`}</style>
     </section>
   )
 }
