@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
-import { BarChart2, TrendingUp } from 'lucide-react'
+import { BarChart2, TrendingUp, Layers, Clock, Cpu, Code2 } from 'lucide-react'
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null)
@@ -34,7 +34,6 @@ function Counter({ target, suffix = '', duration = 1800 }: { target: number, suf
   return <span ref={ref}>{count}{suffix}</span>
 }
 
-// Animated SVG chart (dummy, no API)
 function AnimatedChart() {
   const [phase, setPhase] = useState(0)
   useEffect(() => {
@@ -66,7 +65,6 @@ function AnimatedChart() {
       </defs>
       <path d={area} fill="url(#chartGrad)" />
       <path d={d} fill="none" stroke="url(#lineGrad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      {/* Glowing dot at end */}
       <circle cx={pts[pts.length-1].x} cy={pts[pts.length-1].y} r="5" fill="#00d4ff" opacity="0.9">
         <animate attributeName="r" values="4;7;4" dur="2s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.9;0.4;0.9" dur="2s" repeatCount="indefinite" />
@@ -76,10 +74,10 @@ function AnimatedChart() {
 }
 
 const statsData = [
-  { label: 'Projects Completed', val: 50, suffix: '+', icon: '🚀', color: '#00d4ff' },
-  { label: 'Years Experience', val: 6, suffix: '+', icon: '⚡', color: '#0066ff' },
-  { label: 'Systems Developed', val: 20, suffix: '+', icon: '🛠', color: '#7c3aed' },
-  { label: 'Technology Stack', val: 15, suffix: '+', icon: '💻', color: '#22c55e' },
+  { label: 'Projects Completed', val: 50, suffix: '+', icon: <Layers size={20} />, color: '#00d4ff' },
+  { label: 'Years Experience', val: 6, suffix: '+', icon: <Clock size={20} />, color: '#0066ff' },
+  { label: 'Systems Developed', val: 20, suffix: '+', icon: <Cpu size={20} />, color: '#7c3aed' },
+  { label: 'Technology Stack', val: 15, suffix: '+', icon: <Code2 size={20} />, color: '#22c55e' },
 ]
 
 export default function StatsSection() {
@@ -113,15 +111,16 @@ export default function StatsSection() {
                 <Counter target={50} suffix="+" />
                 <span style={{ fontSize: 14, color: '#94a3b8', fontWeight: 400, marginLeft: 8 }}>Total Projects</span>
               </div>
-              <div style={{ fontSize: 13, color: '#22c55e', marginTop: 4 }}>↑ Consistent Growth</div>
+              <div style={{ fontSize: 13, color: '#22c55e', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <TrendingUp size={12} /> Consistent Growth
+              </div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 4 }}>2018 → 2026</div>
+              <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 4 }}>2018 — 2026</div>
               <div style={{ fontSize: 13, color: '#00d4ff', fontWeight: 600 }}>8 Years Journey</div>
             </div>
           </div>
           <AnimatedChart />
-          {/* X labels */}
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 11, color: 'rgba(148,163,184,0.5)' }}>
             {['2018','2019','2020','2021','2022','2023','2024','2025','2026'].map(y => <span key={y}>{y}</span>)}
           </div>
@@ -139,7 +138,9 @@ export default function StatsSection() {
             }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = `${s.color}50`; (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)' }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,212,255,0.12)'; (e.currentTarget as HTMLElement).style.transform = 'none' }}>
-              <div style={{ fontSize: 28, marginBottom: 8 }}>{s.icon}</div>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: `${s.color}15`, border: `1px solid ${s.color}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color, margin: '0 auto 12px' }}>
+                {s.icon}
+              </div>
               <div style={{ fontSize: 32, fontWeight: 900, color: s.color }}>
                 <Counter target={s.val} suffix={s.suffix} />
               </div>
