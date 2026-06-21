@@ -1,113 +1,107 @@
 'use client'
-import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
-import { Code2, TrendingUp, Brain, Rocket } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { User, MapPin, Calendar, Globe } from 'lucide-react'
 
-function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, amount: 0.1 })
-  return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay, ease: [0.22,1,0.36,1] }} className={className}>
-      {children}
-    </motion.div>
-  )
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } }, { threshold: 0.15 })
+    if (ref.current) obs.observe(ref.current)
+    return () => obs.disconnect()
+  }, [])
+  return { ref, visible }
 }
 
-const timeline = [
-  { year: '2018', icon: Code2, title: 'Memulai Web Development', desc: 'Mulai belajar HTML, CSS, JavaScript. Membangun fondasi programming yang kuat.', color: '#00d4ff' },
-  { year: '2019', icon: Code2, title: 'Project Pertama', desc: 'Membangun project web pertama. Mulai mengeksplorasi framework modern.', color: '#00d4ff' },
-  { year: '2020', icon: Rocket, title: 'Freelance & Automation', desc: 'Aktif freelance development dan mulai membangun sistem automasi.', color: '#0066ff' },
-  { year: '2021', icon: TrendingUp, title: 'Masuk Dunia Trading', desc: 'Memulai perjalanan sebagai trader saham dan cryptocurrency.', color: '#7c3aed' },
-  { year: '2022', icon: TrendingUp, title: 'Sistem Analisa Pasar', desc: 'Membangun berbagai sistem untuk analisa teknikal dan fundamental pasar.', color: '#7c3aed' },
-  { year: '2023', icon: Brain, title: 'Fokus AI & Data', desc: 'Mendalami artificial intelligence, machine learning, dan data analysis.', color: '#ec4899' },
-  { year: '2024', icon: Rocket, title: 'Komunitas & Platform', desc: 'Membangun komunitas trader dan platform finansial untuk masyarakat.', color: '#10b981' },
-  { year: '2025 — Now', icon: Brain, title: 'RITEL COMMUNITY AI', desc: 'Pengembangan AI untuk analisa saham dan platform finansial komunitas.', color: '#ffd700' },
+const timelineItems = [
+  { year: '2018', title: 'Web Development Journey Started', desc: 'Mulai belajar HTML, CSS, JavaScript, dan membangun project pertama.', color: '#0066ff' },
+  { year: '2021', title: 'Trading Saham & Cryptocurrency', desc: 'Terjun ke dunia trading, mempelajari analisa teknikal & fundamental.', color: '#00d4ff' },
+  { year: '2022', title: 'System Development & Automation', desc: 'Membangun sistem analisis, dashboard, dan tools trading sendiri.', color: '#7c3aed' },
+  { year: '2024', title: 'AI Development & Financial Technology', desc: 'Fokus pada pengembangan AI, edukasi, dan membantu lebih banyak orang.', color: '#22c55e' },
 ]
 
 export default function AboutSection() {
+  const { ref, visible } = useReveal()
+
   return (
-    <section id="about" className="relative section-padding overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4">
-        <FadeIn className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-6">
-            <div className="w-2 h-2 rounded-full" style={{ background: '#00d4ff' }} />
-            <span className="text-xs text-slate-400 tracking-widest uppercase">About</span>
+    <section id="about" ref={ref} style={{ padding: '100px 24px', position: 'relative' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 64, opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(24px)', transition: 'all 0.7s ease' }}>
+          <div className="section-label" style={{ justifyContent: 'center', display: 'inline-flex' }}>
+            <User size={12} /> About Me
           </div>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6">
-            Siapa <span className="gradient-text">Thirafi?</span>
+          <h2 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>
+            Perjalanan & <span className="gradient-text">Background</span>
           </h2>
-        </FadeIn>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-20">
-          {[
-            { icon: Code2, title: 'Web Developer', color: '#00d4ff', desc: 'Sejak 2018, membangun berbagai sistem digital mulai dari landing page, e-commerce, dashboard, hingga platform komunitas kompleks. Spesialis Next.js, React, dan sistem full-stack modern.' },
-            { icon: TrendingUp, title: 'Trader & Analis', color: '#7c3aed', desc: 'Aktif trading saham dan cryptocurrency sejak 2021. Mengembangkan metodologi analisa sendiri yang menggabungkan teknikal, fundamental, dan bandarmologi.' },
-            { icon: Brain, title: 'AI Engineer', color: '#ec4899', desc: 'Membangun sistem AI untuk analisa pasar dan automasi. Fokus pada pengembangan produk yang menggabungkan kecerdasan buatan dengan kebutuhan pengguna nyata.' },
-          ].map((card, i) => (
-            <FadeIn key={card.title} delay={i * 0.1}>
-              <div className="glass-strong rounded-3xl p-8 neon-border h-full group hover:scale-[1.02] transition-transform duration-300">
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6"
-                  style={{ background: `${card.color}15`, border: `1px solid ${card.color}40` }}>
-                  <card.icon size={26} style={{ color: card.color }} />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">{card.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{card.desc}</p>
-              </div>
-            </FadeIn>
-          ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
-          {[
-            { label: 'VISI', color: '#00d4ff', text: 'Membangun teknologi yang mampu membantu masyarakat mengambil keputusan yang lebih cepat, tepat, dan berbasis data.' },
-            { label: 'MISI', color: '#7c3aed', text: 'Mengembangkan sistem digital yang bermanfaat, mudah digunakan, serta memberikan dampak nyata bagi pengguna.' },
-          ].map((vm, i) => (
-            <FadeIn key={vm.label} delay={i * 0.15}>
-              <div className="glass-strong rounded-3xl p-8 neon-border relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 rounded-t-3xl"
-                  style={{ background: `linear-gradient(90deg, ${vm.color}, transparent)` }} />
-                <span className="text-xs font-black tracking-widest mb-4 block" style={{ color: vm.color }}>// {vm.label}</span>
-                <p className="text-slate-200 text-lg leading-relaxed font-medium">{vm.text}</p>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-
-        <FadeIn>
-          <div className="text-center mb-14" id="timeline">
-            <h3 className="text-3xl sm:text-4xl font-black text-white mb-3">Timeline <span className="gradient-text">Perjalanan</span></h3>
-            <p className="text-slate-400">Dari belajar coding hingga membangun komunitas</p>
-          </div>
-        </FadeIn>
-
-        <div className="relative max-w-4xl mx-auto">
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px md:-translate-x-px"
-            style={{ background: 'linear-gradient(180deg, transparent, rgba(0,212,255,0.4), transparent)' }} />
-          {timeline.map((item, i) => (
-            <FadeIn key={item.year} delay={i * 0.08}>
-              <div className={`relative flex gap-6 mb-8 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center`}>
-                <div className="absolute left-4 md:left-1/2 w-4 h-4 rounded-full -translate-x-1/2 z-10"
-                  style={{ background: item.color, boxShadow: `0 0 12px ${item.color}` }} />
-                <div className={`ml-12 md:ml-0 md:w-5/12 ${i % 2 === 0 ? 'md:mr-auto md:pr-8' : 'md:ml-auto md:pl-8'}`}>
-                  <div className="glass rounded-2xl p-5 neon-border hover:scale-[1.02] transition-transform duration-200">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                        style={{ background: `${item.color}20`, border: `1px solid ${item.color}40` }}>
-                        <item.icon size={14} style={{ color: item.color }} />
-                      </div>
-                      <span className="text-xs font-bold tracking-wider" style={{ color: item.color, fontFamily: 'JetBrains Mono, monospace' }}>{item.year}</span>
-                    </div>
-                    <h4 className="font-bold text-white text-sm mb-1">{item.title}</h4>
-                    <p className="text-slate-400 text-xs leading-relaxed">{item.desc}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'start' }} className="about-grid">
+          {/* LEFT — Profile card */}
+          <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateX(-30px)', transition: 'all 0.8s ease 0.1s' }}>
+            <div style={{ background: 'rgba(7,20,51,0.6)', border: '1px solid rgba(0,212,255,0.15)', borderRadius: 20, padding: 32, backdropFilter: 'blur(24px)' }}>
+              {/* Avatar */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 28 }}>
+                <div style={{
+                  width: 80, height: 80, borderRadius: 20,
+                  background: 'linear-gradient(135deg, #0066ff, #00d4ff)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 32, fontWeight: 900, color: '#fff',
+                  boxShadow: '0 0 30px rgba(0,102,255,0.4)',
+                  flexShrink: 0,
+                }}>T</div>
+                <div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: '#fff' }}>Thirafi Thariq</div>
+                  <div style={{ fontSize: 13, color: '#00d4ff', marginTop: 4 }}>Web Developer & Trader</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 6, fontSize: 12, color: '#94a3b8' }}>
+                    <MapPin size={11} /> Indonesia
                   </div>
                 </div>
-                <div className="hidden md:block md:w-5/12" />
               </div>
-            </FadeIn>
-          ))}
+
+              <p style={{ fontSize: 14, lineHeight: 1.8, color: 'rgba(203,213,225,0.85)', marginBottom: 24 }}>
+                Developer dan trader profesional yang fokus pada membangun sistem yang memberikan nilai nyata. Memiliki pengalaman luas dalam web development, system engineering, dan financial market analysis.
+              </p>
+
+              {[
+                { icon: <Calendar size={14} />, label: 'Web Dev Since', val: '2018' },
+                { icon: <Globe size={14} />, label: 'Trading Since', val: '2021' },
+                { icon: <User size={14} />, label: 'Focus', val: 'Full-Stack & FinTech' },
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#94a3b8', fontSize: 13 }}>{item.icon}{item.label}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#e2e8f0' }}>{item.val}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT — Timeline */}
+          <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateX(30px)', transition: 'all 0.8s ease 0.2s' }}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#fff', marginBottom: 28 }}>Journey & Experience</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {timelineItems.map((item, i) => (
+                <div key={i} style={{ display: 'flex', gap: 20, position: 'relative' }}>
+                  {/* Line */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+                    <div style={{ width: 14, height: 14, borderRadius: '50%', background: item.color, boxShadow: `0 0 16px ${item.color}`, marginTop: 4, flexShrink: 0 }} />
+                    {i < timelineItems.length - 1 && (
+                      <div style={{ width: 2, flex: 1, minHeight: 50, background: `linear-gradient(180deg, ${item.color}50, transparent)`, margin: '4px 0' }} />
+                    )}
+                  </div>
+                  {/* Content */}
+                  <div style={{ paddingBottom: i < timelineItems.length - 1 ? 28 : 0 }}>
+                    <span style={{ background: `${item.color}20`, border: `1px solid ${item.color}40`, borderRadius: 6, padding: '3px 10px', fontSize: 12, fontWeight: 700, color: item.color, display: 'inline-block', marginBottom: 8 }}>{item.year}</span>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0', marginBottom: 6 }}>{item.title}</div>
+                    <div style={{ fontSize: 13, color: 'rgba(148,163,184,0.8)', lineHeight: 1.6 }}>{item.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
+      <style>{`@media(max-width:768px){.about-grid{grid-template-columns:1fr!important}}`}</style>
     </section>
   )
 }
