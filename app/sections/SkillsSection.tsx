@@ -1,10 +1,10 @@
 'use client'
-import { useRef, useEffect, useState } from 'react'
+import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 
 function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const inView = useInView(ref, { once: true, amount: 0.1 })
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.7, delay, ease: [0.22,1,0.36,1] }} className={className}>
@@ -41,28 +41,19 @@ const services = [
 
 function SkillBar({ skill, delay }: { skill: typeof skills[0]; delay: number }) {
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-50px' })
-
+  const inView = useInView(ref, { once: true, amount: 0.1 })
   return (
     <div ref={ref} className="mb-5">
       <div className="flex justify-between items-center mb-2">
         <span className="text-sm font-medium text-slate-300">{skill.name}</span>
-        <span className="text-xs font-bold" style={{ color: skill.color, fontFamily: 'JetBrains Mono, monospace' }}>
-          {skill.level}%
-        </span>
+        <span className="text-xs font-bold" style={{ color: skill.color, fontFamily: 'JetBrains Mono, monospace' }}>{skill.level}%</span>
       </div>
       <div className="skill-bar">
         <motion.div
           initial={{ scaleX: 0 }}
           animate={inView ? { scaleX: 1 } : {}}
           transition={{ duration: 1.2, delay, ease: [0.22,1,0.36,1] }}
-          className="skill-fill"
-          style={{
-            background: `linear-gradient(90deg, ${skill.color}, ${skill.color}80)`,
-            width: `${skill.level}%`,
-            transformOrigin: 'left',
-            boxShadow: `0 0 10px ${skill.color}60`
-          }}
+          style={{ background: `linear-gradient(90deg, ${skill.color}, ${skill.color}80)`, width: `${skill.level}%`, transformOrigin: 'left', height: '4px', borderRadius: '2px', boxShadow: `0 0 10px ${skill.color}60` }}
         />
       </div>
     </div>
@@ -73,7 +64,6 @@ export default function SkillsSection() {
   return (
     <section id="skills" className="relative section-padding overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
         <FadeIn className="text-center mb-16">
           <div className="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-6">
             <div className="w-2 h-2 rounded-full bg-purple-400" />
@@ -84,30 +74,21 @@ export default function SkillsSection() {
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto">Kombinasi unik antara development, AI, dan trading</p>
         </FadeIn>
-
-        {/* Skills grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
-          {/* Tech skills */}
           <FadeIn delay={0.1}>
             <div className="glass-strong rounded-3xl p-8 neon-border">
               <h3 className="font-bold text-white mb-6 flex items-center gap-2">
-                <span style={{ color: '#00d4ff' }}>{'<'}</span>
-                <span>Tech Stack</span>
-                <span style={{ color: '#00d4ff' }}>{'/>'}</span>
+                <span style={{ color: '#00d4ff' }}>{'<'}</span><span>Tech Stack</span><span style={{ color: '#00d4ff' }}>{'/>'}</span>
               </h3>
-              {skills.filter(s => ['Frontend', 'Backend', 'System'].includes(s.cat)).map((skill, i) => (
+              {skills.filter(s => ['Frontend','Backend','System'].includes(s.cat)).map((skill, i) => (
                 <SkillBar key={skill.name} skill={skill} delay={i * 0.1} />
               ))}
             </div>
           </FadeIn>
-
-          {/* Trading skills */}
           <FadeIn delay={0.2}>
             <div className="glass-strong rounded-3xl p-8 neon-border">
               <h3 className="font-bold text-white mb-6 flex items-center gap-2">
-                <span style={{ color: '#7c3aed' }}>{'<'}</span>
-                <span>Trading & Analysis</span>
-                <span style={{ color: '#7c3aed' }}>{'/>'}</span>
+                <span style={{ color: '#7c3aed' }}>{'<'}</span><span>Trading & Analysis</span><span style={{ color: '#7c3aed' }}>{'/>'}</span>
               </h3>
               {skills.filter(s => s.cat === 'Trading').map((skill, i) => (
                 <SkillBar key={skill.name} skill={skill} delay={i * 0.1} />
@@ -115,14 +96,9 @@ export default function SkillsSection() {
             </div>
           </FadeIn>
         </div>
-
-        {/* Services */}
         <FadeIn>
-          <h3 className="text-3xl font-black text-white text-center mb-10">
-            Apa yang Bisa <span className="gradient-text">Saya Bantu</span>
-          </h3>
+          <h3 className="text-3xl font-black text-white text-center mb-10">Apa yang Bisa <span className="gradient-text">Saya Bantu</span></h3>
         </FadeIn>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {services.map((svc, i) => (
             <FadeIn key={svc.title} delay={i * 0.08}>
