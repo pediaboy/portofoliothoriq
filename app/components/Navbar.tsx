@@ -94,7 +94,7 @@ export default function Navbar() {
               fontFamily: 'inherit',
               boxShadow: '0 0 20px rgba(0,102,255,0.35)',
             }}>
-              Let's Talk ✦
+              Let's Talk
             </button>
             <button onClick={() => setMenuOpen(!menuOpen)} style={{
               background: 'rgba(0,212,255,0.1)', border: '1px solid rgba(0,212,255,0.2)',
