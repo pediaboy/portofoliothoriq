@@ -1,12 +1,12 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
-import { Eye, Target, CheckCircle } from 'lucide-react'
+import { useRef, useState, useEffect } from 'react'
+import { Eye, Target, CheckCircle, Monitor, Server, Zap, BarChart2, TrendingUp, CreditCard, Bot, MessageSquare, Award, Globe, Lightbulb, Layers, Clock } from 'lucide-react'
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
   useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } }, { threshold: 0.1 })
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } }, { threshold: 0.08 })
     if (ref.current) obs.observe(ref.current)
     return () => obs.disconnect()
   }, [])
@@ -14,26 +14,35 @@ function useReveal() {
 }
 
 const services = [
-  { title: 'Web Development', icon: '💻', desc: 'Membangun website dan web app modern, responsif, dan berkinerja tinggi.', color: '#00d4ff' },
-  { title: 'System Development', icon: '🛠', desc: 'Membangun sistem backend, API, database, dan arsitektur scalable.', color: '#0066ff' },
-  { title: 'Automation', icon: '⚙️', desc: 'Otomasi proses bisnis, workflow, dan sistem notifikasi cerdas.', color: '#7c3aed' },
-  { title: 'Data Analysis', icon: '📊', desc: 'Analisa data bisnis, visualisasi, dan laporan interaktif berbasis data.', color: '#22c55e' },
-  { title: 'Trading Analysis', icon: '📈', desc: 'Analisa teknikal & fundamental saham dan crypto untuk keputusan trading.', color: '#f59e0b' },
-  { title: 'Financial Technology', icon: '🏦', desc: 'Pengembangan aplikasi fintech, payment gateway, dan sistem keuangan.', color: '#0066ff' },
-  { title: 'AI Development', icon: '🤖', desc: 'Integrasi AI dan machine learning dalam produk digital.', color: '#a78bfa' },
-  { title: 'Consulting', icon: '🎯', desc: 'Konsultasi strategi teknologi, arsitektur sistem, dan growth digital.', color: '#00d4ff' },
+  { title: 'Web Development', icon: <Monitor size={20} />, desc: 'Membangun website dan web app modern, responsif, dan berkinerja tinggi.', color: '#00d4ff' },
+  { title: 'System Development', icon: <Server size={20} />, desc: 'Membangun sistem backend, API, database, dan arsitektur scalable.', color: '#0066ff' },
+  { title: 'Automation', icon: <Zap size={20} />, desc: 'Otomasi proses bisnis, workflow, dan sistem notifikasi cerdas.', color: '#7c3aed' },
+  { title: 'Data Analysis', icon: <BarChart2 size={20} />, desc: 'Analisa data bisnis, visualisasi, dan laporan interaktif berbasis data.', color: '#22c55e' },
+  { title: 'Trading Analysis', icon: <TrendingUp size={20} />, desc: 'Analisa teknikal & fundamental saham dan crypto untuk keputusan trading.', color: '#f59e0b' },
+  { title: 'Financial Technology', icon: <CreditCard size={20} />, desc: 'Pengembangan aplikasi fintech, payment gateway, dan sistem keuangan.', color: '#0066ff' },
+  { title: 'AI Development', icon: <Bot size={20} />, desc: 'Integrasi AI dan machine learning dalam produk digital.', color: '#a78bfa' },
+  { title: 'Consulting', icon: <MessageSquare size={20} />, desc: 'Konsultasi strategi teknologi, arsitektur sistem, dan growth digital.', color: '#00d4ff' },
+]
+
+const achievements = [
+  { icon: <Layers size={20} />, title: '50+ Projects', desc: 'Berbagai project web, sistem, dan platform yang telah berhasil didelivery.', color: '#00d4ff' },
+  { icon: <TrendingUp size={20} />, title: '3+ Tahun Trading', desc: 'Konsisten trading saham & crypto dengan pendekatan data-driven.', color: '#22c55e' },
+  { icon: <Bot size={20} />, title: 'AI Integration', desc: 'Berhasil mengintegrasikan AI ke dalam beberapa platform digital.', color: '#7c3aed' },
+  { icon: <Zap size={20} />, title: 'Full-Stack Mastery', desc: 'Menguasai end-to-end development dari UI hingga database & deployment.', color: '#0066ff' },
+  { icon: <Globe size={20} />, title: 'Platform Aktif', desc: 'RITEL COMMUNITY.ID — platform trader aktif dengan ribuan pengguna.', color: '#f59e0b' },
+  { icon: <Lightbulb size={20} />, title: '8 Tahun Journey', desc: 'Perjalanan panjang dari pemula hingga developer & trader profesional.', color: '#00d4ff' },
+]
+
+const missions = [
+  'Terus belajar dan berkembang',
+  'Membangun produk digital yang bermanfaat',
+  'Mengembangkan teknologi berbasis data',
+  'Membantu lebih banyak orang melalui teknologi',
 ]
 
 export default function MarketSection() {
   const { ref, visible } = useReveal()
   const [hovered, setHovered] = useState<number | null>(null)
-
-  const missions = [
-    'Terus belajar dan berkembang',
-    'Membangun produk digital yang bermanfaat',
-    'Mengembangkan teknologi berbasis data',
-    'Membantu lebih banyak orang melalui teknologi',
-  ]
 
   return (
     <>
@@ -41,7 +50,9 @@ export default function MarketSection() {
       <section id="vision" ref={ref} style={{ padding: '100px 24px', position: 'relative' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 56, opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(24px)', transition: 'all 0.7s ease' }}>
-            <div className="section-label" style={{ display: 'inline-flex', justifyContent: 'center' }}><Eye size={12} /> Vision & Mission</div>
+            <div className="section-label" style={{ display: 'inline-flex', justifyContent: 'center' }}>
+              <Eye size={12} /> Vision & Mission
+            </div>
             <h2 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>
               Visi & <span className="gradient-text">Misi</span>
             </h2>
@@ -50,7 +61,9 @@ export default function MarketSection() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 80 }} className="vm-grid">
             {/* Vision */}
             <div style={{ background: 'rgba(7,20,51,0.65)', border: '1px solid rgba(0,102,255,0.25)', borderRadius: 20, padding: 36, backdropFilter: 'blur(24px)', opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateX(-24px)', transition: 'all 0.8s ease 0.1s' }}>
-              <div style={{ width: 52, height: 52, borderRadius: 14, background: 'rgba(0,102,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, marginBottom: 20 }}>👁</div>
+              <div style={{ width: 52, height: 52, borderRadius: 14, background: 'rgba(0,102,255,0.15)', border: '1px solid rgba(0,102,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa', marginBottom: 20 }}>
+                <Eye size={22} />
+              </div>
               <h3 style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginBottom: 14 }}>VISI</h3>
               <p style={{ fontSize: 15, lineHeight: 1.75, color: 'rgba(203,213,225,0.85)' }}>
                 Menjadi developer dan trader yang mampu membangun sistem yang bermanfaat, efisien, dan memiliki dampak nyata bagi banyak orang.
@@ -60,7 +73,9 @@ export default function MarketSection() {
 
             {/* Mission */}
             <div style={{ background: 'rgba(7,20,51,0.65)', border: '1px solid rgba(124,58,237,0.25)', borderRadius: 20, padding: 36, backdropFilter: 'blur(24px)', opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateX(24px)', transition: 'all 0.8s ease 0.2s' }}>
-              <div style={{ width: 52, height: 52, borderRadius: 14, background: 'rgba(124,58,237,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, marginBottom: 20 }}>🎯</div>
+              <div style={{ width: 52, height: 52, borderRadius: 14, background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a78bfa', marginBottom: 20 }}>
+                <Target size={22} />
+              </div>
               <h3 style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginBottom: 14 }}>MISI</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {missions.map((m, i) => (
@@ -80,30 +95,27 @@ export default function MarketSection() {
       <section id="achievements" style={{ padding: '0 24px 100px', position: 'relative' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <div className="section-label" style={{ display: 'inline-flex', justifyContent: 'center' }}>🏆 Achievements</div>
+            <div className="section-label" style={{ display: 'inline-flex', justifyContent: 'center' }}>
+              <Award size={12} /> Achievements
+            </div>
             <h2 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>
               Pencapaian <span className="gradient-text">Utama</span>
             </h2>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }} className="ach-grid">
-            {[
-              { icon: '🚀', title: '50+ Projects', desc: 'Berbagai project web, sistem, dan platform yang telah berhasil didelivery.', color: '#00d4ff' },
-              { icon: '📈', title: '3+ Tahun Trading', desc: 'Konsisten trading saham & crypto dengan pendekatan data-driven.', color: '#22c55e' },
-              { icon: '🤖', title: 'AI Integration', desc: 'Berhasil mengintegrasikan AI ke dalam beberapa platform digital.', color: '#7c3aed' },
-              { icon: '⚡', title: 'Full-Stack Mastery', desc: 'Menguasai end-to-end development dari UI hingga database & deployment.', color: '#0066ff' },
-              { icon: '🌐', title: 'Platform Aktif', desc: 'RITEL COMMUNITY.ID — platform trader aktif dengan ribuan pengguna.', color: '#f59e0b' },
-              { icon: '💡', title: '8 Tahun Journey', desc: 'Perjalanan panjang dari pemula hingga developer & trader profesional.', color: '#00d4ff' },
-            ].map((a, i) => (
+            {achievements.map((a, i) => (
               <div key={i} style={{
-                background: 'rgba(7,20,51,0.6)', border: `1px solid rgba(0,212,255,0.12)`,
-                borderRadius: 16, padding: '24px 22px', backdropFilter: 'blur(16px)',
+                background: 'rgba(7,20,51,0.6)', border: '1px solid rgba(0,212,255,0.12)',
+                borderRadius: 16, padding: '28px 24px', backdropFilter: 'blur(16px)',
                 transition: 'all 0.3s ease',
               }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = `${a.color}40`; (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = `0 12px 40px rgba(0,0,0,0.3)` }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,212,255,0.12)'; (e.currentTarget as HTMLElement).style.transform = 'none'; (e.currentTarget as HTMLElement).style.boxShadow = 'none' }}>
-                <div style={{ fontSize: 32, marginBottom: 12 }}>{a.icon}</div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: a.color, marginBottom: 8 }}>{a.title}</div>
+                <div style={{ width: 48, height: 48, borderRadius: 12, background: `${a.color}15`, border: `1px solid ${a.color}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: a.color, marginBottom: 16 }}>
+                  {a.icon}
+                </div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: '#e2e8f0', marginBottom: 8 }}>{a.title}</div>
                 <div style={{ fontSize: 13, color: 'rgba(148,163,184,0.8)', lineHeight: 1.6 }}>{a.desc}</div>
               </div>
             ))}
@@ -136,7 +148,9 @@ export default function MarketSection() {
                   transform: hovered === i ? 'translateY(-5px)' : 'none',
                   boxShadow: hovered === i ? `0 12px 40px rgba(0,0,0,0.35), 0 0 24px ${s.color}15` : 'none',
                 }}>
-                <div style={{ fontSize: 32, marginBottom: 12 }}>{s.icon}</div>
+                <div style={{ width: 48, height: 48, borderRadius: 12, background: `${s.color}15`, border: `1px solid ${s.color}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color, marginBottom: 14 }}>
+                  {s.icon}
+                </div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: '#e2e8f0', marginBottom: 8, lineHeight: 1.3 }}>{s.title}</div>
                 <div style={{ fontSize: 12, color: 'rgba(148,163,184,0.75)', lineHeight: 1.6 }}>{s.desc}</div>
                 <div style={{ marginTop: 16, height: 2, borderRadius: 1, background: `linear-gradient(90deg, ${s.color}, transparent)`, opacity: hovered === i ? 1 : 0.3, transition: 'opacity 0.3s' }} />
