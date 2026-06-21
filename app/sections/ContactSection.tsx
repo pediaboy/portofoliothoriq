@@ -5,7 +5,7 @@ import { MessageCircle, Send, Mail, Instagram, Github, ArrowRight } from 'lucide
 
 function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
+  const inView = useInView(ref, { once: true, amount: 0.1 })
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.7, delay, ease: [0.22,1,0.36,1] }} className={className}>
@@ -15,31 +15,11 @@ function FadeIn({ children, delay = 0, className = '' }: { children: React.React
 }
 
 const contacts = [
-  {
-    icon: MessageCircle, label: 'WhatsApp',
-    value: '082218723401', href: 'https://wa.me/6282218723401',
-    desc: 'Chat langsung, respons cepat', color: '#00ff88',
-  },
-  {
-    icon: Send, label: 'Telegram',
-    value: '@thirafi_thariq', href: 'https://t.me/thirafi_thariq',
-    desc: 'Diskusi project lebih detail', color: '#00d4ff',
-  },
-  {
-    icon: Mail, label: 'Email',
-    value: 'thirafi.thariq@gmail.com', href: 'mailto:thirafi.thariq@gmail.com',
-    desc: 'Brief, proposal, atau inquiry', color: '#7c3aed',
-  },
-  {
-    icon: Instagram, label: 'Instagram',
-    value: '@thirafi_thariq', href: 'https://instagram.com/thirafi_thariq',
-    desc: 'Update project dan konten', color: '#ec4899',
-  },
-  {
-    icon: Github, label: 'GitHub',
-    value: 'pediaboy', href: 'https://github.com/pediaboy',
-    desc: 'Source code dan project open source', color: '#94a3b8',
-  },
+  { icon: MessageCircle, label: 'WhatsApp', value: '082218723401', href: 'https://wa.me/6282218723401', desc: 'Chat langsung, respons cepat', color: '#00ff88' },
+  { icon: Send, label: 'Telegram', value: '@thirafi_thariq', href: 'https://t.me/thirafi_thariq', desc: 'Diskusi project lebih detail', color: '#00d4ff' },
+  { icon: Mail, label: 'Email', value: 'thirafi.thariq@gmail.com', href: 'mailto:thirafi.thariq@gmail.com', desc: 'Brief, proposal, atau inquiry', color: '#7c3aed' },
+  { icon: Instagram, label: 'Instagram', value: '@thirafi_thariq', href: 'https://instagram.com/thirafi_thariq', desc: 'Update project dan konten', color: '#ec4899' },
+  { icon: Github, label: 'GitHub', value: 'pediaboy', href: 'https://github.com/pediaboy', desc: 'Source code dan project open source', color: '#94a3b8' },
 ]
 
 export default function ContactSection() {
@@ -59,7 +39,6 @@ export default function ContactSection() {
           </p>
         </FadeIn>
 
-        {/* CTA Banner */}
         <FadeIn delay={0.1} className="mb-10">
           <div className="glass-strong rounded-3xl p-8 sm:p-12 text-center neon-border relative overflow-hidden">
             <div className="absolute inset-0 pointer-events-none"
@@ -68,28 +47,21 @@ export default function ContactSection() {
               Siap Membangun Sesuatu yang <span className="gradient-text">Luar Biasa?</span>
             </h3>
             <p className="text-slate-400 mb-8 relative z-10">Dari ide ke produk nyata. Let&apos;s build together.</p>
-            <motion.a
-              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+            <motion.a whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               href="https://wa.me/6282218723401?text=Halo%20Thirafi%2C%20saya%20ingin%20berdiskusi%20tentang%20project"
               target="_blank" rel="noopener noreferrer"
-              className="btn-primary inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-white text-base relative z-10"
-            >
-              <MessageCircle size={20} />
-              Mulai Diskusi Sekarang
-              <ArrowRight size={18} />
+              className="btn-primary inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-white text-base relative z-10">
+              <MessageCircle size={20} />Mulai Diskusi Sekarang<ArrowRight size={18} />
             </motion.a>
           </div>
         </FadeIn>
 
-        {/* Contact cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {contacts.map((c, i) => (
             <FadeIn key={c.label} delay={i * 0.08}>
-              <motion.a
-                href={c.href} target="_blank" rel="noopener noreferrer"
+              <motion.a href={c.href} target="_blank" rel="noopener noreferrer"
                 whileHover={{ y: -4, scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                className="glass-strong rounded-2xl p-5 neon-border flex items-center gap-4 group"
-              >
+                className="glass-strong rounded-2xl p-5 neon-border flex items-center gap-4 group">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110"
                   style={{ background: `${c.color}15`, border: `1px solid ${c.color}40` }}>
                   <c.icon size={20} style={{ color: c.color }} />
@@ -105,7 +77,6 @@ export default function ContactSection() {
           ))}
         </div>
 
-        {/* Footer */}
         <FadeIn delay={0.5} className="mt-20 pt-10 border-t border-blue-900/20 text-center">
           <div className="flex items-center justify-center gap-3 mb-3">
             <div className="w-8 h-8 rounded-xl flex items-center justify-center"
@@ -114,14 +85,11 @@ export default function ContactSection() {
             </div>
             <span className="font-black text-white tracking-widest text-sm">THIRAFI THARIQ AL IDRIS</span>
           </div>
-          <p className="text-slate-600 text-xs mb-1">
-            Copyright © {new Date().getFullYear()} Thirafi Thariq Al Idris. All rights reserved.
-          </p>
+          <p className="text-slate-600 text-xs mb-1">Copyright &copy; 2025 Thirafi Thariq Al Idris. All rights reserved.</p>
           <p className="text-slate-700 text-xs">
-            Built with{' '}
-            <span style={{ color: '#00d4ff' }}>Next.js</span>,{' '}
+            Built with <span style={{ color: '#00d4ff' }}>Next.js</span>,{' '}
             <span style={{ color: '#7c3aed' }}>TypeScript</span>,{' '}
-            <span style={{ color: '#38bdf8' }}>Tailwind CSS</span> &{' '}
+            <span style={{ color: '#38bdf8' }}>Tailwind CSS</span> &amp;{' '}
             <span style={{ color: '#ec4899' }}>Framer Motion</span>
           </p>
           <p className="text-slate-700 text-xs mt-1">
