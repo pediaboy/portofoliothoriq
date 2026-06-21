@@ -1,191 +1,151 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
-import { motion, useInView } from 'framer-motion'
-import { TrendingUp, TrendingDown, Activity } from 'lucide-react'
+import { Eye, Target, CheckCircle } from 'lucide-react'
 
-function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, amount: 0.1 })
-  return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay, ease: [0.22,1,0.36,1] }} className={className}>
-      {children}
-    </motion.div>
-  )
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } }, { threshold: 0.1 })
+    if (ref.current) obs.observe(ref.current)
+    return () => obs.disconnect()
+  }, [])
+  return { ref, visible }
 }
 
-const TICKERS = [
-  { sym: 'BBCA', price: 9550, change: 1.12 },
-  { sym: 'TLKM', price: 3180, change: -0.63 },
-  { sym: 'BMRI', price: 6450, change: 2.30 },
-  { sym: 'ASII', price: 4820, change: -1.05 },
-  { sym: 'BBRI', price: 4890, change: 0.82 },
-  { sym: 'BTC', price: 68420, change: 3.41 },
-  { sym: 'ETH', price: 3620, change: 1.95 },
-  { sym: 'GOTO', price: 71, change: -2.08 },
-  { sym: 'UNVR', price: 4210, change: 0.24 },
-  { sym: 'ICBP', price: 9875, change: 1.54 },
+const services = [
+  { title: 'Web Development', icon: '💻', desc: 'Membangun website dan web app modern, responsif, dan berkinerja tinggi.', color: '#00d4ff' },
+  { title: 'System Development', icon: '🛠', desc: 'Membangun sistem backend, API, database, dan arsitektur scalable.', color: '#0066ff' },
+  { title: 'Automation', icon: '⚙️', desc: 'Otomasi proses bisnis, workflow, dan sistem notifikasi cerdas.', color: '#7c3aed' },
+  { title: 'Data Analysis', icon: '📊', desc: 'Analisa data bisnis, visualisasi, dan laporan interaktif berbasis data.', color: '#22c55e' },
+  { title: 'Trading Analysis', icon: '📈', desc: 'Analisa teknikal & fundamental saham dan crypto untuk keputusan trading.', color: '#f59e0b' },
+  { title: 'Financial Technology', icon: '🏦', desc: 'Pengembangan aplikasi fintech, payment gateway, dan sistem keuangan.', color: '#0066ff' },
+  { title: 'AI Development', icon: '🤖', desc: 'Integrasi AI dan machine learning dalam produk digital.', color: '#a78bfa' },
+  { title: 'Consulting', icon: '🎯', desc: 'Konsultasi strategi teknologi, arsitektur sistem, dan growth digital.', color: '#00d4ff' },
 ]
 
-function genCandles() {
-  const arr: { open: number; close: number; high: number; low: number }[] = []
-  let price = 5500
-  for (let i = 0; i < 40; i++) {
-    const open = price
-    const move = (Math.random() - 0.48) * 120
-    const close = open + move
-    const high = Math.max(open, close) + Math.random() * 40
-    const low = Math.min(open, close) - Math.random() * 40
-    arr.push({ open, close, high, low })
-    price = close
-  }
-  return arr
-}
-
-function CandlestickChart() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [candles, setCandles] = useState(genCandles)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCandles(prev => {
-        const last = prev[prev.length - 1]
-        const open = last.close
-        const move = (Math.random() - 0.48) * 100
-        const close = open + move
-        const high = Math.max(open, close) + Math.random() * 30
-        const low = Math.min(open, close) - Math.random() * 30
-        return [...prev.slice(1), { open, close, high, low }]
-      })
-    }, 800)
-    return () => clearInterval(interval)
-  }, [])
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    const W = canvas.width, H = canvas.height
-    ctx.clearRect(0, 0, W, H)
-    const prices = candles.flatMap(c => [c.high, c.low])
-    const min = Math.min(...prices), max = Math.max(...prices)
-    const range = max - min || 1
-    const cw = W / candles.length, pad = 10
-    ctx.strokeStyle = 'rgba(0,212,255,0.05)'
-    ctx.lineWidth = 1
-    for (let i = 0; i <= 4; i++) {
-      const y = pad + (H - pad * 2) * i / 4
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke()
-    }
-    candles.forEach((c, i) => {
-      const x = i * cw + cw / 2
-      const toY = (v: number) => H - pad - ((v - min) / range) * (H - pad * 2)
-      const bull = c.close >= c.open
-      const color = bull ? '#00ff88' : '#ff4466'
-      ctx.strokeStyle = color; ctx.lineWidth = 1
-      ctx.beginPath(); ctx.moveTo(x, toY(c.high)); ctx.lineTo(x, toY(c.low)); ctx.stroke()
-      ctx.fillStyle = bull ? 'rgba(0,255,136,0.7)' : 'rgba(255,68,102,0.7)'
-      ctx.fillRect(x - cw * 0.3, Math.min(toY(c.open), toY(c.close)), cw * 0.6, Math.max(Math.abs(toY(c.close) - toY(c.open)), 2))
-    })
-  }, [candles])
-
-  return <canvas ref={canvasRef} width={500} height={160} className="w-full" style={{ maxHeight: 160 }} />
-}
-
-function LivePrice({ base, change }: { base: number; change: number }) {
-  const [val, setVal] = useState(base)
-  useEffect(() => {
-    const iv = setInterval(() => {
-      setVal(p => Math.max(base * 0.95, Math.min(base * 1.05, p + (Math.random() - 0.5) * 20)))
-    }, 1500)
-    return () => clearInterval(iv)
-  }, [base])
-  return <span className={change >= 0 ? 'text-green-400' : 'text-red-400'}>{val.toLocaleString('id-ID', { maximumFractionDigits: 0 })}</span>
-}
-
 export default function MarketSection() {
+  const { ref, visible } = useReveal()
+  const [hovered, setHovered] = useState<number | null>(null)
+
+  const missions = [
+    'Terus belajar dan berkembang',
+    'Membangun produk digital yang bermanfaat',
+    'Mengembangkan teknologi berbasis data',
+    'Membantu lebih banyak orang melalui teknologi',
+  ]
+
   return (
-    <section id="market" className="relative section-padding overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4">
-        <FadeIn className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-6">
-            <Activity size={12} className="text-green-400 animate-pulse" />
-            <span className="text-xs text-slate-400 tracking-widest uppercase">Live Simulation</span>
+    <>
+      {/* VISION & MISSION */}
+      <section id="vision" ref={ref} style={{ padding: '100px 24px', position: 'relative' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 56, opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(24px)', transition: 'all 0.7s ease' }}>
+            <div className="section-label" style={{ display: 'inline-flex', justifyContent: 'center' }}><Eye size={12} /> Vision & Mission</div>
+            <h2 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>
+              Visi & <span className="gradient-text">Misi</span>
+            </h2>
           </div>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4">Market <span className="gradient-text">Dashboard</span></h2>
-          <p className="text-slate-400 max-w-xl mx-auto">Visualisasi pasar real-time — data simulasi untuk demonstrasi</p>
-        </FadeIn>
-        <FadeIn className="mb-6">
-          <div className="glass rounded-2xl py-3 overflow-hidden neon-border">
-            <div className="ticker-wrapper">
-              <div className="ticker-inner animate-ticker">
-                {[...TICKERS, ...TICKERS].map((t, i) => (
-                  <div key={i} className="inline-flex items-center gap-2 px-6 border-r border-blue-900/30">
-                    <span className="font-bold text-sm text-white" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{t.sym}</span>
-                    <LivePrice base={t.price} change={t.change} />
-                    <span className={`text-xs font-bold flex items-center gap-0.5 ${t.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      {t.change >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                      {t.change >= 0 ? '+' : ''}{t.change}%
-                    </span>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 80 }} className="vm-grid">
+            {/* Vision */}
+            <div style={{ background: 'rgba(7,20,51,0.65)', border: '1px solid rgba(0,102,255,0.25)', borderRadius: 20, padding: 36, backdropFilter: 'blur(24px)', opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateX(-24px)', transition: 'all 0.8s ease 0.1s' }}>
+              <div style={{ width: 52, height: 52, borderRadius: 14, background: 'rgba(0,102,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, marginBottom: 20 }}>👁</div>
+              <h3 style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginBottom: 14 }}>VISI</h3>
+              <p style={{ fontSize: 15, lineHeight: 1.75, color: 'rgba(203,213,225,0.85)' }}>
+                Menjadi developer dan trader yang mampu membangun sistem yang bermanfaat, efisien, dan memiliki dampak nyata bagi banyak orang.
+              </p>
+              <div style={{ marginTop: 24, height: 3, borderRadius: 2, background: 'linear-gradient(90deg, #0066ff, #00d4ff, transparent)' }} />
+            </div>
+
+            {/* Mission */}
+            <div style={{ background: 'rgba(7,20,51,0.65)', border: '1px solid rgba(124,58,237,0.25)', borderRadius: 20, padding: 36, backdropFilter: 'blur(24px)', opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateX(24px)', transition: 'all 0.8s ease 0.2s' }}>
+              <div style={{ width: 52, height: 52, borderRadius: 14, background: 'rgba(124,58,237,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, marginBottom: 20 }}>🎯</div>
+              <h3 style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginBottom: 14 }}>MISI</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {missions.map((m, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                    <CheckCircle size={16} color="#22c55e" style={{ flexShrink: 0, marginTop: 2 }} />
+                    <span style={{ fontSize: 14, color: 'rgba(203,213,225,0.85)', lineHeight: 1.5 }}>{m}</span>
                   </div>
                 ))}
               </div>
+              <div style={{ marginTop: 24, height: 3, borderRadius: 2, background: 'linear-gradient(90deg, #7c3aed, transparent)' }} />
             </div>
-          </div>
-        </FadeIn>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          <FadeIn delay={0.1} className="lg:col-span-2">
-            <div className="market-card p-6 h-full">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-xs text-slate-500">IHSG Simulation</p>
-                  <p className="text-2xl font-black text-white" style={{ fontFamily: 'JetBrains Mono, monospace' }}>7,285.42</p>
-                </div>
-                <div className="flex items-center gap-1 text-green-400 font-bold"><TrendingUp size={16} /><span className="text-sm">+1.24%</span></div>
-              </div>
-              <CandlestickChart />
-              <div className="flex gap-4 mt-4 pt-4 border-t border-blue-900/20">
-                <div><p className="text-xs text-slate-500">Volume</p><p className="text-sm font-bold text-white">24.8B</p></div>
-                <div><p className="text-xs text-slate-500">High</p><p className="text-sm font-bold text-green-400">7,312</p></div>
-                <div><p className="text-xs text-slate-500">Low</p><p className="text-sm font-bold text-red-400">7,198</p></div>
-              </div>
-            </div>
-          </FadeIn>
-          <div className="flex flex-col gap-4">
-            <FadeIn delay={0.2}>
-              <div className="market-card p-5">
-                <p className="text-xs text-slate-500 mb-3 uppercase tracking-wider">Top Movers</p>
-                {TICKERS.slice(0, 5).map(t => (
-                  <div key={t.sym} className="flex items-center justify-between py-2 border-b border-blue-900/10 last:border-0">
-                    <div>
-                      <p className="text-sm font-bold text-white">{t.sym}</p>
-                      <p className="text-xs text-slate-500">{t.price.toLocaleString()}</p>
-                    </div>
-                    <span className={`text-sm font-bold px-2 py-0.5 rounded-lg ${t.change >= 0 ? 'text-green-400 bg-green-400/10' : 'text-red-400 bg-red-400/10'}`}>
-                      {t.change >= 0 ? '+' : ''}{t.change}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.3}>
-              <div className="market-card p-5">
-                <p className="text-xs text-slate-500 mb-3 uppercase tracking-wider">Market Heatmap</p>
-                <div className="grid grid-cols-4 gap-1">
-                  {TICKERS.map(t => (
-                    <div key={t.sym} className="aspect-square rounded-lg flex flex-col items-center justify-center"
-                      style={{ background: t.change >= 0 ? `rgba(0,255,136,${Math.min(0.3,Math.abs(t.change)*0.08)})` : `rgba(255,68,102,${Math.min(0.3,Math.abs(t.change)*0.08)})`, border: `1px solid ${t.change >= 0 ? 'rgba(0,255,136,0.2)' : 'rgba(255,68,102,0.2)'}` }}>
-                      <p className="text-white font-bold" style={{ fontSize: '9px' }}>{t.sym}</p>
-                      <p className={`font-bold ${t.change >= 0 ? 'text-green-400' : 'text-red-400'}`} style={{ fontSize: '8px' }}>{t.change >= 0 ? '+' : ''}{t.change}%</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </FadeIn>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* ACHIEVEMENTS */}
+      <section id="achievements" style={{ padding: '0 24px 100px', position: 'relative' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <div className="section-label" style={{ display: 'inline-flex', justifyContent: 'center' }}>🏆 Achievements</div>
+            <h2 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>
+              Pencapaian <span className="gradient-text">Utama</span>
+            </h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }} className="ach-grid">
+            {[
+              { icon: '🚀', title: '50+ Projects', desc: 'Berbagai project web, sistem, dan platform yang telah berhasil didelivery.', color: '#00d4ff' },
+              { icon: '📈', title: '3+ Tahun Trading', desc: 'Konsisten trading saham & crypto dengan pendekatan data-driven.', color: '#22c55e' },
+              { icon: '🤖', title: 'AI Integration', desc: 'Berhasil mengintegrasikan AI ke dalam beberapa platform digital.', color: '#7c3aed' },
+              { icon: '⚡', title: 'Full-Stack Mastery', desc: 'Menguasai end-to-end development dari UI hingga database & deployment.', color: '#0066ff' },
+              { icon: '🌐', title: 'Platform Aktif', desc: 'RITEL COMMUNITY.ID — platform trader aktif dengan ribuan pengguna.', color: '#f59e0b' },
+              { icon: '💡', title: '8 Tahun Journey', desc: 'Perjalanan panjang dari pemula hingga developer & trader profesional.', color: '#00d4ff' },
+            ].map((a, i) => (
+              <div key={i} style={{
+                background: 'rgba(7,20,51,0.6)', border: `1px solid rgba(0,212,255,0.12)`,
+                borderRadius: 16, padding: '24px 22px', backdropFilter: 'blur(16px)',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = `${a.color}40`; (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = `0 12px 40px rgba(0,0,0,0.3)` }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,212,255,0.12)'; (e.currentTarget as HTMLElement).style.transform = 'none'; (e.currentTarget as HTMLElement).style.boxShadow = 'none' }}>
+                <div style={{ fontSize: 32, marginBottom: 12 }}>{a.icon}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: a.color, marginBottom: 8 }}>{a.title}</div>
+                <div style={{ fontSize: 13, color: 'rgba(148,163,184,0.8)', lineHeight: 1.6 }}>{a.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <style>{`@media(max-width:768px){.ach-grid{grid-template-columns:1fr!important}}`}</style>
+      </section>
+
+      {/* SERVICES */}
+      <section id="services" style={{ padding: '0 24px 100px', position: 'relative' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <div className="section-label" style={{ display: 'inline-flex', justifyContent: 'center' }}>
+              <Target size={12} /> What I Do
+            </div>
+            <h2 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>
+              Layanan & <span className="gradient-text">Keahlian</span>
+            </h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18 }} className="svc-grid">
+            {services.map((s, i) => (
+              <div key={i}
+                onMouseEnter={() => setHovered(i)}
+                onMouseLeave={() => setHovered(null)}
+                style={{
+                  background: 'rgba(7,20,51,0.6)', border: `1px solid ${hovered === i ? s.color + '45' : 'rgba(0,212,255,0.12)'}`,
+                  borderRadius: 16, padding: '24px 20px', backdropFilter: 'blur(16px)',
+                  cursor: 'default', transition: 'all 0.3s ease',
+                  transform: hovered === i ? 'translateY(-5px)' : 'none',
+                  boxShadow: hovered === i ? `0 12px 40px rgba(0,0,0,0.35), 0 0 24px ${s.color}15` : 'none',
+                }}>
+                <div style={{ fontSize: 32, marginBottom: 12 }}>{s.icon}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#e2e8f0', marginBottom: 8, lineHeight: 1.3 }}>{s.title}</div>
+                <div style={{ fontSize: 12, color: 'rgba(148,163,184,0.75)', lineHeight: 1.6 }}>{s.desc}</div>
+                <div style={{ marginTop: 16, height: 2, borderRadius: 1, background: `linear-gradient(90deg, ${s.color}, transparent)`, opacity: hovered === i ? 1 : 0.3, transition: 'opacity 0.3s' }} />
+              </div>
+            ))}
+          </div>
+        </div>
+        <style>{`@media(max-width:900px){.svc-grid{grid-template-columns:repeat(2,1fr)!important}} @media(max-width:500px){.svc-grid{grid-template-columns:1fr!important}} @media(max-width:768px){.vm-grid{grid-template-columns:1fr!important}}`}</style>
+      </section>
+    </>
   )
 }
