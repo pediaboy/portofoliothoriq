@@ -1,116 +1,73 @@
 'use client'
-import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { Cpu } from 'lucide-react'
 
-function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, amount: 0.1 })
-  return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay, ease: [0.22,1,0.36,1] }} className={className}>
-      {children}
-    </motion.div>
-  )
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } }, { threshold: 0.1 })
+    if (ref.current) obs.observe(ref.current)
+    return () => obs.disconnect()
+  }, [])
+  return { ref, visible }
 }
 
 const skills = [
-  { name: 'Next.js / React', level: 95, color: '#00d4ff', cat: 'Frontend' },
-  { name: 'TypeScript', level: 90, color: '#00d4ff', cat: 'Frontend' },
-  { name: 'Frontend Development', level: 93, color: '#0066ff', cat: 'Frontend' },
-  { name: 'Node.js / Backend', level: 85, color: '#0066ff', cat: 'Backend' },
-  { name: 'Database Design', level: 82, color: '#0066ff', cat: 'Backend' },
-  { name: 'System Architecture', level: 80, color: '#7c3aed', cat: 'System' },
-  { name: 'Artificial Intelligence', level: 78, color: '#7c3aed', cat: 'System' },
-  { name: 'Technical Analysis', level: 92, color: '#ec4899', cat: 'Trading' },
-  { name: 'Trading Analysis', level: 88, color: '#ec4899', cat: 'Trading' },
-  { name: 'Fundamental Analysis', level: 85, color: '#f59e0b', cat: 'Trading' },
-  { name: 'Bandarmologi', level: 80, color: '#f59e0b', cat: 'Trading' },
-  { name: 'Crypto Research', level: 85, color: '#10b981', cat: 'Trading' },
+  { name: 'Next.js', pct: 92, color: '#00d4ff' },
+  { name: 'React', pct: 90, color: '#0066ff' },
+  { name: 'TypeScript', pct: 85, color: '#7c3aed' },
+  { name: 'Tailwind CSS', pct: 93, color: '#00d4ff' },
+  { name: 'Node.js', pct: 80, color: '#22c55e' },
+  { name: 'Supabase', pct: 88, color: '#3b82f6' },
+  { name: 'Database', pct: 82, color: '#0066ff' },
+  { name: 'Automation', pct: 85, color: '#7c3aed' },
+  { name: 'API Integration', pct: 90, color: '#00d4ff' },
+  { name: 'AI Development', pct: 78, color: '#a78bfa' },
+  { name: 'Trading Analysis', pct: 88, color: '#22c55e' },
+  { name: 'Data Analytics', pct: 82, color: '#f59e0b' },
 ]
-
-const services = [
-  { title: 'Web Development', icon: '🌐', desc: 'Landing page, company profile, toko online, sistem custom.' },
-  { title: 'System Development', icon: '⚙️', desc: 'Backend, API, sistem automasi, dan integrasi layanan.' },
-  { title: 'AI Integration', icon: '🤖', desc: 'Integrasi AI/ML ke dalam produk dan sistem yang sudah ada.' },
-  { title: 'Dashboard Development', icon: '📊', desc: 'Dashboard monitoring, analitik, dan visualisasi data.' },
-  { title: 'Automation System', icon: '🔄', desc: 'Bot, workflow otomatis, dan sistem pemrosesan data.' },
-  { title: 'Trading Tools', icon: '📈', desc: 'Tools analisa teknikal, screener, dan sistem sinyal trading.' },
-  { title: 'Financial Technology', icon: '💎', desc: 'Platform fintech, membership, dan sistem pembayaran.' },
-  { title: 'Consulting', icon: '🎯', desc: 'Konsultasi arsitektur sistem, strategi digital, dan trading.' },
-]
-
-function SkillBar({ skill, delay }: { skill: typeof skills[0]; delay: number }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, amount: 0.1 })
-  return (
-    <div ref={ref} className="mb-5">
-      <div className="flex justify-between items-center mb-2">
-        <span className="text-sm font-medium text-slate-300">{skill.name}</span>
-        <span className="text-xs font-bold" style={{ color: skill.color, fontFamily: 'JetBrains Mono, monospace' }}>{skill.level}%</span>
-      </div>
-      <div className="skill-bar">
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={inView ? { scaleX: 1 } : {}}
-          transition={{ duration: 1.2, delay, ease: [0.22,1,0.36,1] }}
-          style={{ background: `linear-gradient(90deg, ${skill.color}, ${skill.color}80)`, width: `${skill.level}%`, transformOrigin: 'left', height: '4px', borderRadius: '2px', boxShadow: `0 0 10px ${skill.color}60` }}
-        />
-      </div>
-    </div>
-  )
-}
 
 export default function SkillsSection() {
+  const { ref, visible } = useReveal()
+  const [animate, setAnimate] = useState(false)
+  useEffect(() => { if (visible) setTimeout(() => setAnimate(true), 200) }, [visible])
+
   return (
-    <section id="skills" className="relative section-padding overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4">
-        <FadeIn className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-6">
-            <div className="w-2 h-2 rounded-full bg-purple-400" />
-            <span className="text-xs text-slate-400 tracking-widest uppercase">Skills & Services</span>
+    <section id="skills" ref={ref} style={{ padding: '100px 24px', position: 'relative' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 56, opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(24px)', transition: 'all 0.7s ease' }}>
+          <div className="section-label" style={{ display: 'inline-flex', justifyContent: 'center' }}>
+            <Cpu size={12} /> Tech Stack
           </div>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4">
-            Keahlian <span className="gradient-text">& Layanan</span>
+          <h2 style={{ fontSize: 'clamp(28px,4vw,44px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>
+            Skills & <span className="gradient-text">Expertise</span>
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto">Kombinasi unik antara development, AI, dan trading</p>
-        </FadeIn>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
-          <FadeIn delay={0.1}>
-            <div className="glass-strong rounded-3xl p-8 neon-border">
-              <h3 className="font-bold text-white mb-6 flex items-center gap-2">
-                <span style={{ color: '#00d4ff' }}>{'<'}</span><span>Tech Stack</span><span style={{ color: '#00d4ff' }}>{'/>'}</span>
-              </h3>
-              {skills.filter(s => ['Frontend','Backend','System'].includes(s.cat)).map((skill, i) => (
-                <SkillBar key={skill.name} skill={skill} delay={i * 0.1} />
-              ))}
-            </div>
-          </FadeIn>
-          <FadeIn delay={0.2}>
-            <div className="glass-strong rounded-3xl p-8 neon-border">
-              <h3 className="font-bold text-white mb-6 flex items-center gap-2">
-                <span style={{ color: '#7c3aed' }}>{'<'}</span><span>Trading & Analysis</span><span style={{ color: '#7c3aed' }}>{'/>'}</span>
-              </h3>
-              {skills.filter(s => s.cat === 'Trading').map((skill, i) => (
-                <SkillBar key={skill.name} skill={skill} delay={i * 0.1} />
-              ))}
-            </div>
-          </FadeIn>
+          <p style={{ fontSize: 15, color: 'rgba(148,163,184,0.8)', marginTop: 12, maxWidth: 500, margin: '12px auto 0' }}>
+            Teknologi yang digunakan dalam membangun sistem dan produk digital
+          </p>
         </div>
-        <FadeIn>
-          <h3 className="text-3xl font-black text-white text-center mb-10">Apa yang Bisa <span className="gradient-text">Saya Bantu</span></h3>
-        </FadeIn>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {services.map((svc, i) => (
-            <FadeIn key={svc.title} delay={i * 0.08}>
-              <div className="glass rounded-2xl p-6 neon-border h-full group hover:bg-blue-950/20 transition-all duration-300 hover:scale-[1.03] cursor-default">
-                <div className="text-3xl mb-4">{svc.icon}</div>
-                <h4 className="font-bold text-white text-sm mb-2">{svc.title}</h4>
-                <p className="text-slate-400 text-xs leading-relaxed">{svc.desc}</p>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 20 }} className="skills-grid">
+          {skills.map((sk, i) => (
+            <div key={i} style={{
+              background: 'rgba(7,20,51,0.6)', border: '1px solid rgba(0,212,255,0.1)',
+              borderRadius: 14, padding: '18px 22px', backdropFilter: 'blur(16px)',
+              opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(20px)',
+              transition: `all 0.6s ease ${i * 0.06}s`,
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>{sk.name}</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: sk.color }}>{sk.pct}%</span>
               </div>
-            </FadeIn>
+              <div className="progress-track">
+                <div className="progress-fill" style={{ width: animate ? `${sk.pct}%` : '0%', background: `linear-gradient(90deg, ${sk.color}80, ${sk.color})`, boxShadow: `0 0 12px ${sk.color}60`, transitionDelay: `${i * 0.06}s` }} />
+              </div>
+            </div>
           ))}
         </div>
       </div>
+      <style>{`@media(max-width:640px){.skills-grid{grid-template-columns:1fr!important}}`}</style>
     </section>
   )
 }
