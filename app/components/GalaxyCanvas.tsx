@@ -81,7 +81,15 @@ export default function GalaxyCanvas() {
 
         ctx.beginPath()
         const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3)
-        grd.addColorStop(0, p.color.replace(')', `,${currentOpacity})`).replace('rgb', 'rgba').replace('#', 'rgba(') || `rgba(0,212,255,${currentOpacity})`)
+        // Convert hex color (#rrggbb) to rgba properly
+        const hexToRgba = (hex: string, alpha: number) => {
+          const h = hex.replace('#', '')
+          const r = parseInt(h.substring(0,2), 16)
+          const g = parseInt(h.substring(2,4), 16)
+          const b = parseInt(h.substring(4,6), 16)
+          return `rgba(${r},${g},${b},${alpha})`
+        }
+        grd.addColorStop(0, hexToRgba(p.color, currentOpacity))
         grd.addColorStop(1, 'transparent')
 
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
