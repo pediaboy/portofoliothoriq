@@ -1,121 +1,133 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Code2, TrendingUp } from 'lucide-react'
 
-const links = [
-  { label: 'Beranda', href: '#hero' },
-  { label: 'Tentang', href: '#about' },
-  { label: 'Skill', href: '#skills' },
-  { label: 'Portofolio', href: '#portfolio' },
-  { label: 'Market', href: '#market' },
-  { label: 'Kontak', href: '#contact' },
+const navItems = [
+  { id: 'hero', label: 'Home' },
+  { id: 'about', label: 'About' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'vision', label: 'Vision' },
+  { id: 'achievements', label: 'Achievements' },
+  { id: 'services', label: 'Services' },
+  { id: 'contact', label: 'Contact' },
 ]
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const [open, setOpen] = useState(false)
   const [active, setActive] = useState('hero')
+  const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', onScroll)
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40)
+      const sections = navItems.map(n => document.getElementById(n.id)).filter(Boolean)
+      let current = 'hero'
+      sections.forEach(sec => {
+        if (sec && window.scrollY >= sec.offsetTop - 120) current = sec.id
+      })
+      setActive(current)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const scrollTo = (href: string) => {
-    const id = href.replace('#', '')
+  const scrollTo = (id: string) => {
+    setMenuOpen(false)
     const el = document.getElementById(id)
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
-    setOpen(false)
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, delay: 2.5, ease: [0.22,1,0.36,1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'py-3' : 'py-5'}`}
-      >
-        <div className={`mx-4 sm:mx-auto sm:max-w-6xl rounded-2xl px-6 transition-all duration-500 ${
-          scrolled ? 'glass-strong shadow-lg shadow-black/50 py-3' : 'py-4'
-        }`}>
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <motion.button
-              onClick={() => scrollTo('#hero')}
-              whileHover={{ scale: 1.05 }}
-              className="flex items-center gap-3"
-            >
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, rgba(0,212,255,0.25), rgba(0,102,255,0.25))', border: '1px solid rgba(0,212,255,0.4)' }}>
-                <span className="text-sm font-black" style={{ color: '#00d4ff', fontFamily: 'JetBrains Mono, monospace' }}>T</span>
-              </div>
-              <span className="font-bold text-white text-sm hidden sm:block tracking-wide">THIRAFI</span>
-            </motion.button>
+      <nav style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+        padding: scrolled ? '10px 0' : '18px 0',
+        background: scrolled ? 'rgba(2,8,24,0.92)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(24px)' : 'none',
+        borderBottom: scrolled ? '1px solid rgba(0,212,255,0.1)' : 'none',
+        transition: 'all 0.4s ease',
+      }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          {/* Logo */}
+          <div onClick={() => scrollTo('hero')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{
+              width: 38, height: 38, borderRadius: 10,
+              background: 'linear-gradient(135deg, #0066ff, #00d4ff)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 900, fontSize: 16, color: '#fff',
+              boxShadow: '0 0 20px rgba(0,212,255,0.4)',
+            }}>T</div>
+            <span style={{ fontWeight: 700, fontSize: 15, color: '#fff', letterSpacing: 0.5 }}>THIRAFI</span>
+          </div>
 
-            {/* Desktop links */}
-            <div className="hidden md:flex items-center gap-1">
-              {links.map(link => (
-                <button key={link.href}
-                  onClick={() => scrollTo(link.href)}
-                  className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white rounded-xl transition-all duration-200 hover:bg-white/5"
-                >
-                  {link.label}
-                </button>
-              ))}
-            </div>
-
-            {/* CTA */}
-            <div className="hidden md:flex items-center gap-3">
-              <motion.button
-                whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                onClick={() => scrollTo('#contact')}
-                className="btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold text-white"
+          {/* Desktop Nav */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }} className="hidden md:flex">
+            {navItems.map(item => (
+              <button key={item.id} onClick={() => scrollTo(item.id)} style={{
+                padding: '8px 14px',
+                background: active === item.id ? 'rgba(0,212,255,0.1)' : 'transparent',
+                border: active === item.id ? '1px solid rgba(0,212,255,0.3)' : '1px solid transparent',
+                borderRadius: 8,
+                color: active === item.id ? '#00d4ff' : 'rgba(226,232,240,0.75)',
+                fontSize: 13, fontWeight: 500, cursor: 'pointer',
+                transition: 'all 0.25s ease',
+                fontFamily: 'inherit',
+              }}
+              onMouseEnter={e => { if (active !== item.id) { (e.target as HTMLElement).style.color = '#00d4ff'; (e.target as HTMLElement).style.background = 'rgba(0,212,255,0.06)' } }}
+              onMouseLeave={e => { if (active !== item.id) { (e.target as HTMLElement).style.color = 'rgba(226,232,240,0.75)'; (e.target as HTMLElement).style.background = 'transparent' } }}
               >
-                Hubungi Saya
-              </motion.button>
-            </div>
+                {item.label}
+              </button>
+            ))}
+          </div>
 
-            {/* Mobile menu */}
-            <button onClick={() => setOpen(!open)} className="md:hidden p-2 rounded-xl" style={{ color: '#00d4ff' }}>
-              {open ? <X size={22} /> : <Menu size={22} />}
+          {/* CTA */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button onClick={() => scrollTo('contact')} style={{
+              padding: '9px 20px',
+              background: 'linear-gradient(135deg, #0066ff, #00d4ff)',
+              border: 'none', borderRadius: 9,
+              color: '#fff', fontSize: 13, fontWeight: 600,
+              cursor: 'pointer', transition: 'all 0.3s ease',
+              fontFamily: 'inherit',
+              boxShadow: '0 0 20px rgba(0,102,255,0.35)',
+            }}>
+              Let's Talk ✦
+            </button>
+            <button onClick={() => setMenuOpen(!menuOpen)} style={{
+              background: 'rgba(0,212,255,0.1)', border: '1px solid rgba(0,212,255,0.2)',
+              borderRadius: 8, width: 38, height: 38, display: 'flex', alignItems: 'center',
+              justifyContent: 'center', cursor: 'pointer', color: '#00d4ff',
+            }} className="md:hidden">
+              {menuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
         </div>
-      </motion.nav>
+      </nav>
 
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed top-20 left-4 right-4 z-40 glass-strong rounded-2xl p-4"
-          >
-            {links.map((link, i) => (
-              <motion.button key={link.href}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
-                onClick={() => scrollTo(link.href)}
-                className="w-full text-left px-4 py-3 text-slate-300 hover:text-white rounded-xl hover:bg-white/5 transition-all text-sm font-medium"
-              >
-                {link.label}
-              </motion.button>
-            ))}
-            <motion.button
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-              onClick={() => scrollTo('#contact')}
-              className="w-full mt-2 btn-primary py-3 rounded-xl text-sm font-semibold text-white"
-            >
-              Hubungi Saya
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div style={{
+          position: 'fixed', top: 64, left: 0, right: 0, zIndex: 99,
+          background: 'rgba(2,8,24,0.97)', backdropFilter: 'blur(32px)',
+          borderBottom: '1px solid rgba(0,212,255,0.1)',
+          padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: 4,
+        }}>
+          {navItems.map(item => (
+            <button key={item.id} onClick={() => scrollTo(item.id)} style={{
+              padding: '12px 16px', textAlign: 'left',
+              background: active === item.id ? 'rgba(0,212,255,0.1)' : 'transparent',
+              border: active === item.id ? '1px solid rgba(0,212,255,0.2)' : '1px solid transparent',
+              borderRadius: 8, color: active === item.id ? '#00d4ff' : '#cbd5e1',
+              fontSize: 14, fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit',
+            }}>
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
     </>
   )
 }
